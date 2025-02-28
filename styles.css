@@ -164,10 +164,10 @@ a:hover {
 }
 
 #hero {
-    background-image: url("https://upload.wikimedia.org/wikipedia/commons/thumb/3/3b/Spas_vsederzhitel_sinay_%28cropped1%29.jpg/800px-Spas_vsederzhitel_sinay_%28cropped1%29.jpg");
+    background-image: url("Jesus\ Banner.jpg");
     max-height: 640px;
     background-repeat: no-repeat;
-    background-size: cover;
+    background-size: contain;
     background-position: center;
     aspect-ratio: 12/3;
 }
