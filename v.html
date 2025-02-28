@@ -48,18 +48,44 @@
                 videoContainer.style.justifyContent = "center";
                 videoContainer.style.alignItems = "center";
 
+                // Get viewport dimensions
+                const viewportWidth = window.innerWidth;
+                const viewportHeight = window.innerHeight;
+                const padding = 20; // Buffer space around the player
+
                 // Handle dimensions and visibility
                 if (isShort) {
-                    videoEmbed.style.maxWidth = "400px"; // Shorts width
-                    videoEmbed.style.width = "400px";
-                    videoEmbed.style.height = "711px"; // 9:16 aspect ratio
-                    videoEmbed.style.position = "relative"; // Ensure iframe positioning works
+                    // Shorts: 9:16 aspect ratio, max 400px width
+                    let shortsWidth = 400;
+                    let shortsHeight = 711; // 400 * (16/9)
+                    if (viewportWidth < 400 + padding * 2) {
+                        shortsWidth = viewportWidth - padding * 2; // Add padding buffer
+                        shortsHeight = shortsWidth * (16 / 9); // Maintain 9:16
+                    }
+
+                    videoEmbed.style.maxWidth = `${shortsWidth}px`;
+                    videoEmbed.style.width = `${shortsWidth}px`;
+                    videoEmbed.style.height = `${shortsHeight}px`;
+                    videoEmbed.style.position = "relative";
                 } else {
-                    // Regular video: ensure full-screen
-                    videoEmbed.style.maxWidth = "100vw"; // Full viewport width
-                    videoEmbed.style.width = "100vw";
-                    videoEmbed.style.height = "100vh"; // Full viewport height
-                    videoEmbed.style.position = "relative"; // Ensure iframe positioning works
+                    // Regular video: Fit to viewport with padding, maintain 16:9 aspect ratio
+                    let playerWidth = viewportWidth - padding * 2; // Add padding on both sides
+                    let playerHeight = viewportHeight - padding * 2; // Add padding top/bottom
+                    const aspectRatio = 16 / 9;
+
+                    // Adjust to fit viewport while preserving 16:9
+                    if (playerWidth / playerHeight > aspectRatio) {
+                        // Viewport is wider than 16:9, limit by height
+                        playerWidth = playerHeight * aspectRatio;
+                    } else {
+                        // Viewport is taller than 16:9, limit by width
+                        playerHeight = playerWidth / aspectRatio;
+                    }
+
+                    videoEmbed.style.maxWidth = `${playerWidth}px`;
+                    videoEmbed.style.width = `${playerWidth}px`;
+                    videoEmbed.style.height = `${playerHeight}px`;
+                    videoEmbed.style.position = "relative";
                 }
 
                 // Ensure iframe fills its container
