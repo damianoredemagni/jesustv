@@ -27,6 +27,13 @@ async function loadContent() {
             const videoEmbed = card.querySelector(".video-embed");
             const videoId = videoEmbed.dataset.videoId;
 
+            // Make the card clickable
+            card.style.cursor = "pointer";
+            card.addEventListener("click", () => {
+                // Navigate to the details page with the video ID as a parameter
+                window.location.href = `v.html?id=${videoId}`;
+            });
+
             getVideoData(videoId)
                 .then((data) => {
                     console.log(`Processing video: ${videoId}`);
