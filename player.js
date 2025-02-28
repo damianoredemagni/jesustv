@@ -1,87 +1,51 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Get video ID from URL parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const videoId = urlParams.get("id");
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Video Player</title>
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <div class="wrapper">
+            <section class="video-container">
+                <div class="video-embed" id="video-embed">
+                    <iframe
+                        id="video-player"
+                        src=""
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                    ></iframe>
+                </div>
+            </section>
+        </div>
+        <script>
+            // Get the video ID from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const videoIdParam = urlParams.get('id');
+            const iframe = document.getElementById('video-player');
+            const videoEmbed = document.getElementById('video-embed');
 
-    if (!videoId) {
-        document.getElementById("content").innerHTML =
-            '<div class="container"><p>No video selected. <a href="index.html">Go back</a></p></div>';
-        return;
-    }
+            if (videoIdParam) {
+                // Check if it's a Short (contains "shorts/")
+                const isShort = videoIdParam.includes('shorts/');
+                const videoId = isShort ? videoIdParam.split('shorts/')[1] : videoIdParam;
 
-    const videoContainer = document.getElementById("video-container");
-    const thumbnailPlaceholder = document.getElementById(
-        "thumbnail-placeholder",
-    );
-    const youtubePlayer = document.getElementById("youtube-player");
+                // Set iframe source with autoplay
+                iframe.src = `https://www.youtube.com/embed/${videoId}?controls=0&modestbranding=1&rel=0&autoplay=1`;
 
-    // Determine if it's a short video
-    const isShort = videoId.includes("shorts/");
-
-    // Set initial aspect ratio class
-    videoContainer.classList.add(isShort ? "portrait" : "landscape");
-
-    // Get video data and render
-    getVideoData(videoId)
-        .then((data) => {
-            document.title = data.title;
-
-            // Set video information
-            document.getElementById("video-info").innerHTML = `
-                <h1>${data.title}</h1>
-                <p><a href="${data.author_url}" target="_blank">${data.author_name}</a></p>
-            `;
-
-            // Refine aspect ratio based on actual dimensions from oembed
-            const isPortrait = isShort || data.height > data.width;
-            videoContainer.classList.remove("landscape", "portrait");
-            videoContainer.classList.add(isPortrait ? "portrait" : "landscape");
-
-            // Set thumbnail
-            thumbnailPlaceholder.style.backgroundImage = `url('${data.thumbnail_url}')`;
-
-            // Setup the YouTube iframe with appropriate parameters
-            let embedId;
-            let playerParams = "autoplay=1";
-
-            if (isShort) {
-                embedId = videoId.split("shorts/")[1];
-                // For shorts: remove controls, hide info, remove YouTube branding
-                playerParams +=
-                    "&controls=0&showinfo=0&modestbranding=1&rel=0&loop=1";
+                // Dynamically set class based on aspect ratio
+                videoEmbed.classList.remove('landscape', 'portrait');
+                if (isShort) {
+                    videoEmbed.classList.add('portrait');
+                } else {
+                    videoEmbed.classList.add('landscape');
+                }
             } else {
-                embedId = videoId;
+                console.error('No video ID provided in URL');
             }
-
-            // Set iframe source
-            youtubePlayer.src = `https://www.youtube.com/embed/${embedId}?${playerParams}`;
-            youtubePlayer.title = data.title;
-
-            // After a slight delay, show the YouTube player
-            setTimeout(() => {
-                thumbnailPlaceholder.style.display = "none";
-                youtubePlayer.style.display = "block";
-            }, 500);
-        })
-        .catch((err) => {
-            console.error("Error fetching video details:", err);
-            document.getElementById("video-info").innerHTML = `
-                <p>Error loading video information.</p>
-            `;
-        });
-});
-
-async function getVideoData(videoId) {
-    // Handle both regular videos and shorts
-    let actualId = videoId;
-    if (videoId.includes("shorts/")) {
-        actualId = videoId.split("shorts/")[1];
-    }
-
-    const baseUrl = videoId.includes("shorts/")
-        ? `https://www.youtube.com/shorts/${actualId}`
-        : `https://www.youtube.com/watch?v=${actualId}`;
-
-    const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(baseUrl)}&format=json`;
-    return (await fetch(url)).json();
-}
+        </script>
+    </body>
+</html>

@@ -4,38 +4,73 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Video Player</title>
-        <script src="player.js" defer></script>
         <link rel="stylesheet" href="styles.css" />
     </head>
     <body>
-        <div class="wrapper">
-            <section id="content">
-                <div class="container">
-                    <a href="index.html" class="back-button"
-                        >← Back to videos</a
-                    >
-
-                    <!-- Video container with placeholder for thumbnail -->
-                    <div id="video-container" class="video-wrapper">
-                        <div
-                            id="thumbnail-placeholder"
-                            class="thumbnail-placeholder"
-                        ></div>
-                        <iframe
-                            id="youtube-player"
-                            width="560"
-                            height="315"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            allowfullscreen
-                            style="display: none"
-                        ></iframe>
-                    </div>
-
-                    <div id="video-info"></div>
+        <div class="wrapper" id="wrapper">
+            <section class="video-container" id="video-container">
+                <div class="video-embed" id="video-embed">
+                    <iframe
+                        id="video-player"
+                        src=""
+                        title="YouTube video player"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                    ></iframe>
                 </div>
             </section>
         </div>
+        <script>
+            // Get the video ID from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const videoIdParam = urlParams.get("id");
+            const iframe = document.getElementById("video-player");
+            const videoEmbed = document.getElementById("video-embed");
+            const wrapper = document.getElementById("wrapper");
+            const videoContainer = document.getElementById("video-container");
+
+            if (videoIdParam) {
+                // Check if it's a Short (contains "shorts/")
+                const isShort = videoIdParam.includes("shorts/");
+                const videoId = isShort
+                    ? videoIdParam.split("shorts/")[1]
+                    : videoIdParam;
+
+                // Set iframe source with autoplay
+                iframe.src = `https://www.youtube.com/embed/${videoId}?controls=0&modestbranding=1&rel=0&autoplay=1`;
+
+                // Center wrapper and container
+                wrapper.style.display = "flex";
+                wrapper.style.justifyContent = "center";
+                wrapper.style.alignItems = "center";
+                videoContainer.style.display = "flex";
+                videoContainer.style.justifyContent = "center";
+                videoContainer.style.alignItems = "center";
+
+                // Handle dimensions and visibility
+                if (isShort) {
+                    videoEmbed.style.maxWidth = "400px"; // Shorts width
+                    videoEmbed.style.width = "400px";
+                    videoEmbed.style.height = "711px"; // 9:16 aspect ratio
+                    videoEmbed.style.position = "relative"; // Ensure iframe positioning works
+                } else {
+                    // Regular video: ensure full-screen
+                    videoEmbed.style.maxWidth = "100vw"; // Full viewport width
+                    videoEmbed.style.width = "100vw";
+                    videoEmbed.style.height = "100vh"; // Full viewport height
+                    videoEmbed.style.position = "relative"; // Ensure iframe positioning works
+                }
+
+                // Ensure iframe fills its container
+                iframe.style.position = "absolute";
+                iframe.style.top = "0";
+                iframe.style.left = "0";
+                iframe.style.width = "100%";
+                iframe.style.height = "100%";
+            } else {
+                console.error("No video ID provided in URL");
+            }
+        </script>
     </body>
 </html>
