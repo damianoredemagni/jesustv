@@ -67,6 +67,8 @@ section {
     background-position: center;
     width: 100%;
     height: 0;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .video-embed.portrait {
@@ -109,9 +111,6 @@ p {
 }
 
 .portrait {
-    aspect-ratio: 9 / 16;
-    width: 100%;
-    height: 0;
     padding-bottom: 56.25%; /* For 16:9 aspect ratio */
 }
 
