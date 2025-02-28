@@ -14,9 +14,25 @@
                     <a href="index.html" class="back-button"
                         >← Back to videos</a
                     >
-                    <div id="video-container" class="card">
-                        <div id="player" class="video-embed"></div>
+
+                    <!-- Video container with placeholder for thumbnail -->
+                    <div id="video-container" class="video-wrapper">
+                        <div
+                            id="thumbnail-placeholder"
+                            class="thumbnail-placeholder"
+                        ></div>
+                        <iframe
+                            id="youtube-player"
+                            width="560"
+                            height="315"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen
+                            style="display: none"
+                        ></iframe>
                     </div>
+
                     <div id="video-info"></div>
                 </div>
             </section>

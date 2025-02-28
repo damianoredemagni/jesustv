@@ -9,29 +9,22 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    const playerDiv = document.getElementById("player");
     const videoContainer = document.getElementById("video-container");
+    const thumbnailPlaceholder = document.getElementById(
+        "thumbnail-placeholder",
+    );
+    const youtubePlayer = document.getElementById("youtube-player");
 
-    // Set initial aspect ratio based on URL
+    // Determine if it's a short video
     const isShort = videoId.includes("shorts/");
-    if (isShort) {
-        playerDiv.classList.add("portrait");
-    } else {
-        playerDiv.classList.add("landscape");
-    }
+
+    // Set initial aspect ratio class
+    videoContainer.classList.add(isShort ? "portrait" : "landscape");
 
     // Get video data and render
     getVideoData(videoId)
         .then((data) => {
             document.title = data.title;
-
-            // Set background image first for a smoother loading experience
-            playerDiv.style.backgroundImage = `url('${data.thumbnail_url}')`;
-
-            // Refine aspect ratio based on actual dimensions from oembed
-            const isPortrait = isShort || data.height > data.width;
-            playerDiv.classList.remove("landscape", "portrait");
-            playerDiv.classList.add(isPortrait ? "portrait" : "landscape");
 
             // Set video information
             document.getElementById("video-info").innerHTML = `
@@ -39,36 +32,36 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p><a href="${data.author_url}" target="_blank">${data.author_name}</a></p>
             `;
 
-            // After a slight delay to ensure background is visible, load the actual player
+            // Refine aspect ratio based on actual dimensions from oembed
+            const isPortrait = isShort || data.height > data.width;
+            videoContainer.classList.remove("landscape", "portrait");
+            videoContainer.classList.add(isPortrait ? "portrait" : "landscape");
+
+            // Set thumbnail
+            thumbnailPlaceholder.style.backgroundImage = `url('${data.thumbnail_url}')`;
+
+            // Setup the YouTube iframe with appropriate parameters
+            let embedId;
+            let playerParams = "autoplay=1";
+
+            if (isShort) {
+                embedId = videoId.split("shorts/")[1];
+                // For shorts: remove controls, hide info, remove YouTube branding
+                playerParams +=
+                    "&controls=0&showinfo=0&modestbranding=1&rel=0&loop=1";
+            } else {
+                embedId = videoId;
+            }
+
+            // Set iframe source
+            youtubePlayer.src = `https://www.youtube.com/embed/${embedId}?${playerParams}`;
+            youtubePlayer.title = data.title;
+
+            // After a slight delay, show the YouTube player
             setTimeout(() => {
-                // Handle both regular videos and shorts
-                let embedUrl;
-                let playerParams = "autoplay=1";
-
-                if (isShort) {
-                    const shortId = videoId.split("shorts/")[1];
-                    embedUrl = `https://www.youtube.com/embed/${shortId}`;
-                    // For shorts: remove controls, hide info, remove YouTube branding
-                    playerParams +=
-                        "&controls=0&showinfo=0&modestbranding=1&rel=0&loop=1";
-                } else {
-                    embedUrl = `https://www.youtube.com/embed/${videoId}`;
-                }
-
-                // Create and insert the iframe with appropriate parameters
-                const iframe = document.createElement("iframe");
-                iframe.width = "100%";
-                iframe.height = "100%";
-                iframe.src = `${embedUrl}?${playerParams}`;
-                iframe.frameBorder = "0";
-                iframe.allow =
-                    "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-                iframe.allowFullscreen = true;
-
-                // Clear background and add iframe
-                playerDiv.style.backgroundImage = "";
-                playerDiv.appendChild(iframe);
-            }, 500); // 500ms delay to show thumbnail before video loads
+                thumbnailPlaceholder.style.display = "none";
+                youtubePlayer.style.display = "block";
+            }, 500);
         })
         .catch((err) => {
             console.error("Error fetching video details:", err);
@@ -80,9 +73,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
 async function getVideoData(videoId) {
     // Handle both regular videos and shorts
+    let actualId = videoId;
+    if (videoId.includes("shorts/")) {
+        actualId = videoId.split("shorts/")[1];
+    }
+
     const baseUrl = videoId.includes("shorts/")
-        ? `https://www.youtube.com/shorts/${videoId.split("shorts/")[1]}`
-        : `https://www.youtube.com/watch?v=${videoId}`;
+        ? `https://www.youtube.com/shorts/${actualId}`
+        : `https://www.youtube.com/watch?v=${actualId}`;
+
     const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(baseUrl)}&format=json`;
     return (await fetch(url)).json();
 }
