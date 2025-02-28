@@ -51,7 +51,7 @@ async function loadContent() {
                     videoEmbed.style.backgroundImage = `url('${data.thumbnail_url}')`;
                     card.querySelector(".info-text").innerHTML = `
                         <p><strong>${data.title}</strong></p>
-                        <p>${data.author_name}</p>
+                        <a href="${data.author_url}" target="_blank">${data.author_name}</a>
                     `;
                 })
                 .catch((error) => {
