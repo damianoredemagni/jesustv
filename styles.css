@@ -27,6 +27,7 @@ section {
     margin: 0 auto;
     grid-auto-columns: max-content; /* Prevents children from resizing */
     grid-auto-rows: max-content; /* Prevents children from resizing */
+    height: fit-content;
 }
 
 /* Container Direction */
@@ -36,6 +37,7 @@ section {
 
 .column {
     grid-auto-flow: column;
+    height: fit-content;
 }
 
 /* Components */
@@ -43,9 +45,10 @@ section {
 .card {
     display: grid;
     grid-auto-flow: row;
-    gap: 12px;
     width: 320px;
     position: relative;
+    height: fit-content;
+    gap: 12px;
 }
 
 .overlay-area {
@@ -167,4 +170,17 @@ a:hover {
     background-size: cover;
     background-position: center;
     aspect-ratio: 12/3;
+}
+
+@media screen and (max-width: 768px) {
+    section {
+        padding: 20px 0;
+    }
+}
+
+.info-text {
+    height: fit-content;
+    gap: 4px;
+    display: flex;
+    flex-direction: column;
 }

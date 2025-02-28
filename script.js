@@ -5,7 +5,7 @@ async function loadContent() {
     for (const [category, videos] of Object.entries(data)) {
         const section = document.createElement("section");
         section.innerHTML = `
-            <div class="row">
+            <div class="container row">
                 <h2>${category}</h2>
                 <div class="container column">
                 ${videos

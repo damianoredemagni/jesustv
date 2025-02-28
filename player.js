@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Set video information
             document.getElementById("video-info").innerHTML = `
                 <h1>${data.title}</h1>
-                <p>By: <a href="${data.author_url}" target="_blank">${data.author_name}</a></p>
+                <p><a href="${data.author_url}" target="_blank">${data.author_name}</a></p>
             `;
 
             // After a slight delay to ensure background is visible, load the actual player
