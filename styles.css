@@ -176,7 +176,7 @@ a:hover {
 }
 
 #hero {
-    background-image: url("Jesus\ Banner.jpg");
+    background-image: url("banner.jpg");
     max-height: 640px;
     background-repeat: no-repeat;
     background-size: contain;
